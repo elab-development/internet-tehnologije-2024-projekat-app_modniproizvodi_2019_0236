@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
-    // Front koristi: name, email, message
+    protected $table = 'contact_messages';  
+
     protected $fillable = [
         'name',
         'email',
-        'message',   // sadržaj poruke
-        'processed', // bool: da li je odgovoreno/obrađeno
+        'body',   
+        'message',  
+        'processed',
     ];
 
     protected $casts = [
