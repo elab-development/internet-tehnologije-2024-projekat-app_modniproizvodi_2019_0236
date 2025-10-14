@@ -1,0 +1,75 @@
+ 
+
+.contact-form-section {
+ 
+    background-image: url('https://theglamandglitter.com/wp-content/uploads/2024/01/SS24-Trends.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    padding: 0 20px;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .contact-form-section::after {
+    content: '';
+    background: rgba(0, 0, 0, 0.6); /* Tamni prekrivni sloj */
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  .form-container {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.9); /* Blago prozirna pozadina */
+    padding: 40px;
+    border-radius: 10px;
+  }
+  
+  .form-container h2 {
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    color: #333;
+  }
+  
+  .form-container input,
+  .form-container textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    font-size: 1em;
+    outline: none;
+    background: transparent;
+  }
+  
+  .form-container input:focus,
+  .form-container textarea:focus {
+    border-bottom-color: #ff416c;
+  }
+  
+  .form-container button {
+    background-color: #ff416c;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .form-container button:hover {
+    background-color: #e03e5b;
+  }
+  

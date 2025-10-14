@@ -1,0 +1,107 @@
+ 
+.navbar {
+    background-color: transparent;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; /* Navigacija će ostati na vrhu prilikom skrolanja */
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+  
+  .logo {
+    
+    font-size: 2em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+  }
+  
+  .nav-links li {
+    display: inline;
+  }
+  
+  .nav-links a {
+    
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+  
+  .nav-links a::after {
+    content: '';
+    display: block;
+    width: 0%;
+    height: 2px;
+    background-color: #ff416c;
+    transition: width 0.3s;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+  }
+  
+  .nav-links a:hover {
+    color: #ff416c;
+  }
+  
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      padding: 15px 20px;
+    }
+  
+    .nav-links {
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+  }
+ 
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .nav-links li {
+    display: flex;
+    align-items: center;
+  }
+  
+  .welcome-msg {
+    color: #fff;
+    font-size: 1em;
+    margin-right: 10px;
+  }
+  
+  .logout-btn {
+    background-color: transparent;
+    
+    border: 1px solid  ;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #ff416c;
+    color: #fff;
+    border-color: #ff416c;
+  }
+  
