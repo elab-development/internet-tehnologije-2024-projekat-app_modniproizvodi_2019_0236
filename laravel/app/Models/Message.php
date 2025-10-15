@@ -12,7 +12,7 @@ class Message extends Model
         'name',
         'email',
         'body',   
-        'message',  
+        'message',   
         'processed',
     ];
 
