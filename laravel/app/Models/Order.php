@@ -27,7 +27,7 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-
+ 
     /** (Opcionalno) vlasnik narudžbine */
     public function user(): BelongsTo
     {
