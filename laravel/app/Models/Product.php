@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -63,6 +64,7 @@ class Product extends Model
         if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
             return $img;
         }
-        return url($img); // ili Storage::url($img) ako koristiš storage
+        // čuvamo relativnu putanju (npr. "products/abc.jpg") na public disku
+        return Storage::disk('public')->url($img);
     }
 }
