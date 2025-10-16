@@ -24,12 +24,13 @@ class Product extends Model
         'is_active' => 'boolean',
         'stock'     => 'integer',
     ];
-
+    protected $appends = ['image_url'];
     /** Kategorija */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
+
 
     /* ---------- Scopes za pretragu/sort kao na frontu ---------- */
 
