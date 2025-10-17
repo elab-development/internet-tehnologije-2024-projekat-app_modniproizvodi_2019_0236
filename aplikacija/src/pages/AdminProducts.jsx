@@ -210,8 +210,8 @@ export default function AdminProducts() {
               <tr key={p.id}>
                 <td>{(meta?.from ?? 1) + i}</td>
                 <td>
-                  {p.image ? (
-                    <img className="ap-thumb" src={resolveImg(p.image)} alt={p.name} />
+                  {p.image_url ? (
+                    <img className="ap-thumb" src={resolveImg(p.image_url)} alt={p.name} />
                   ) : <div className="ap-thumb ap-thumb--empty">—</div>}
                 </td>
                 <td>

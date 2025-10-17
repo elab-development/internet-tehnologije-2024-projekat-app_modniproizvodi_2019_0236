@@ -35,9 +35,7 @@ class Product extends Model
     }
 
 
-    /* ---------- Scopes za pretragu/sort kao na frontu ---------- */
 
-    /** scopeSearch('haljina') -> where name/description like ... */
     public function scopeSearch($q, ?string $term)
     {
         if (!filled($term)) return $q;
@@ -56,17 +54,12 @@ class Product extends Model
         return $q->orderBy('price', $dir);
     }
 
-    /* ---------- Helperi ---------- */
 
-    /** Ako je u bazi relativna putanja, vrati pun URL */
-    public function getImageUrlAttribute(): string
-    {
-        $img = $this->image ?? '';
-        if (!$img) return '';
-        if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
-            return $img;
+        public function getImageUrlAttribute(): string
+        {
+            $img = $this->image ?? '';
+            if (!$img) return '';
+            if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) return $img;
+            return Storage::disk('public')->url($img); // npr. http://127.0.0.1:8000/storage/...
         }
-        // čuvamo relativnu putanju (npr. "products/abc.jpg") na public disku
-        return Storage::disk('public')->url($img);
-    }
 }
