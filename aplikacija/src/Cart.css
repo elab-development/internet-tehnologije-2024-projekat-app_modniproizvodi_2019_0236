@@ -54,4 +54,25 @@
   .checkout-btn:hover {
     background-color: #e03e5b;
   }
-  
+  .note {
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.note--ok { background: #eaf8f1; color: #0b7b4c; border: 1px solid #c8eddc; }
+.note--err { background: #fff3f1; color: #b33a3a; border: 1px solid #ffd4cf; }
+
+.checkout-btn.is-loading {
+  opacity: .8;
+  pointer-events: none;
+  position: relative;
+}
+.checkout-btn.is-loading::after {
+  content: "•••";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  letter-spacing: 2px;
+}
