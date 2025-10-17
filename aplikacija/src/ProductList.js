@@ -1,134 +1,120 @@
-import React, { useMemo } from "react"; 
+import React, { useEffect, useMemo, useState } from "react";
 import "./ProductList.css";
-import useProducts from "./hooks/useProducts";
+import api from "./api"; // tvoj axios instance
 
-function ProductList({ addToCart }) {
-  // Inicijalno: aktivni proizvodi, 12 po strani
-  const {
-    products,
-    meta,            // { current_page, last_page, total, per_page }
-    page,
-    setPage,
-    filters,
-    setFilter,
-    resetFilters,
-    loading,
-    error,
-  } = useProducts({
-    perPage: 12,
-    onlyActive: true,
-    initialFilters: {
-      q: "",
-      category_id: "",
-      price_min: "",
-      price_max: "",
-      sort: "", // "price_asc" | "price_desc"
-    },
-  });
+export default function ProductList({ addToCart }) {
+  // filteri
+  const [q, setQ] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [sort, setSort] = useState(""); // "price_asc" | "price_desc"
+  const [onlyActive] = useState(true);
 
-  // Helper: Laravel public disk slike (npr. "products/xyz.jpg") -> "/storage/products/xyz.jpg"
-  const imageUrl = (img) => {
-    if (!img) return "https://via.placeholder.com/400x300?text=No+Image";
-    if (img.startsWith("http://") || img.startsWith("https://")) return img;
-    return `/storage/${img}`; // pretpostavka: php artisan storage:link
+  // paginacija
+  const [page, setPage] = useState(1);
+  const perPage = 12;
+
+  // podaci
+  const [products, setProducts] = useState([]);
+  const [meta, setMeta] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setErr] = useState("");
+
+  const params = useMemo(() => {
+    const p = { page, per_page: perPage, only_active: onlyActive ? 1 : 0 };
+    if (q) p.q = q;
+    if (priceMin) p.price_min = priceMin;
+    if (priceMax) p.price_max = priceMax;
+    if (sort) p.sort = sort;
+    return p;
+  }, [page, perPage, q, priceMin, priceMax, sort, onlyActive]);
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+    (async () => {
+      setLoading(true); setErr("");
+      try {
+        const r = await api.get("/products", { params, signal: ctrl.signal });
+        const body = r?.data ?? r;
+        setProducts(Array.isArray(body?.data) ? body.data : []);
+        setMeta(body?.meta ?? null);
+      } catch (e) {
+        if (e.name !== "CanceledError" && e.name !== "AbortError") setErr("Greška pri učitavanju proizvoda.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => ctrl.abort();
+  }, [params]);
+
+  const resetFilters = () => {
+    setQ(""); setPriceMin(""); setPriceMax(""); setSort(""); setPage(1);
   };
 
-  const canPrev = useMemo(() => meta?.current_page > 1, [meta]);
-  const canNext = useMemo(() => meta && meta.current_page < meta.last_page, [meta]);
+  const canPrev = meta?.current_page > 1;
+  const canNext = meta && meta.current_page < meta.last_page;
+
+  const imageUrl = (img) => {
+    if (!img) return "https://via.placeholder.com/600x400?text=No+Image";
+    if (img.startsWith("http")) return img;
+    if (img.startsWith("/storage")) return img;
+    return `/storage/${img}`;
+  };
 
   return (
     <div className="product-list">
-      <h2>Naši Proizvodi</h2>
+      <h2>Naši proizvodi</h2>
 
       <div className="controls">
         <input
           type="text"
           placeholder="Pretraži proizvode..."
-          value={filters.q}
-          onChange={(e) => setFilter("q", e.target.value)}
+          value={q}
+          onChange={(e) => { setQ(e.target.value); setPage(1); }}
         />
-
-        {/* MIN / MAX cena */}
         <input
-          type="number"
-          min="0"
-          step="0.01"
+          type="number" min="0" step="0.01"
           placeholder="Min cena"
-          value={filters.price_min}
-          onChange={(e) => setFilter("price_min", e.target.value)}
+          value={priceMin}
+          onChange={(e) => { setPriceMin(e.target.value); setPage(1); }}
         />
         <input
-          type="number"
-          min="0"
-          step="0.01"
+          type="number" min="0" step="0.01"
           placeholder="Max cena"
-          value={filters.price_max}
-          onChange={(e) => setFilter("price_max", e.target.value)}
+          value={priceMax}
+          onChange={(e) => { setPriceMax(e.target.value); setPage(1); }}
         />
-
-        {/* Sortiranje — mapirano na backend: price_asc | price_desc */}
-        <select
-          value={filters.sort}
-          onChange={(e) => setFilter("sort", e.target.value)}
-        >
+        <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }}>
           <option value="">Sortiraj</option>
           <option value="price_asc">Cena: od najniže</option>
           <option value="price_desc">Cena: od najviše</option>
         </select>
-
-        <button type="button" onClick={resetFilters}>
-          Resetuj filtere
-        </button>
+        <button type="button" onClick={resetFilters}>Resetuj filtere</button>
       </div>
 
-      {/* State: loading / error */}
       {loading && <p>Učitavanje...</p>}
       {error && <p className="error">{error}</p>}
 
-      {/* Grid proizvoda */}
       <div className="product-grid">
-        {products?.map((product) => (
-          <div className="product-card" key={product.id}>
-            <img src={imageUrl(product.image)} alt={product.name} />
-            <h3 title={product.name}>{product.name}</h3>
-            {product.category?.name && (
-              <span className="badge">{product.category.name}</span>
-            )}
-            <p className="desc">{product.description}</p>
-            <p className="price">
-              {Number(product.price).toFixed(2)} €
-            </p>
-            <button className="buy-btn" onClick={() => addToCart(product)}>
-              Dodaj u korpu
-            </button>
+        {products.map((p) => (
+          <div className="product-card" key={p.id}>
+            <img src={imageUrl(p.image_url || p.image)} alt={p.name} />
+            <h3 title={p.name}>{p.name}</h3>
+            {p.category?.name && <span className="badge">{p.category.name}</span>}
+            {p.description && <p className="desc">{p.description}</p>}
+            <p className="price">{Number(p.price).toFixed(2)} €</p>
+            <button className="buy-btn" onClick={() => addToCart(p)}>Dodaj u korpu</button>
           </div>
         ))}
       </div>
 
-      {/* Paginacija (ako postoji meta) */}
       {meta && meta.last_page > 1 && (
         <div className="pagination">
-          <button
-            disabled={!canPrev}
-            onClick={() => canPrev && setPage(page - 1)}
-          >
-            ‹ Prethodna
-          </button>
-
-          <span>
-            Strana {meta.current_page} / {meta.last_page}
-          </span>
-
-          <button
-            disabled={!canNext}
-            onClick={() => canNext && setPage(page + 1)}
-          >
-            Sledeća ›
-          </button>
+          <button disabled={!canPrev} onClick={() => canPrev && setPage(page - 1)}>‹ Prethodna</button>
+          <span>Strana {meta.current_page} / {meta.last_page}</span>
+          <button disabled={!canNext} onClick={() => canNext && setPage(page + 1)}>Sledeća ›</button>
         </div>
       )}
     </div>
   );
 }
-
-export default ProductList;

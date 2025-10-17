@@ -1,49 +1,39 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Navbar.css';
-import api, { clearAuthToken } from './api';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./Navbar.css";
 
-function Navbar({ currentUser, logoutUser }) {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await api.post('/logout'); // token je već u headeru
-    } catch (e) {
-      // ako token istekne/401, svejedno čistimo stanje
-      // console.warn(e);
-    }
-    // očisti localStorage i axios header
-    localStorage.removeItem('currentUser');
-    clearAuthToken();
-
-    // očisti App state ako je prosleđen handler
-    if (typeof logoutUser === 'function') logoutUser();
-
-    navigate('/');
-  };
-
+export default function Navbar({ currentUser, logoutUser, cartCount = 0 }) {
+  const { pathname } = useLocation();
   return (
-    <nav className="navbar">
-      <h2 className="logo">Modna Oaza</h2>
-      <ul className="nav-links">
-        <li><Link to="/">Početna</Link></li>
-        <li><Link to="/contact">Kontakt</Link></li>
-        {currentUser ? (
-          <>
-            <li><Link to="/proizvodi">Proizvodi</Link></li>
-            <li><Link to="/korpa">Korpa</Link></li>
-            <li><button className="logout-btn" onClick={handleLogout}>Odjavi se</button></li>
-          </>
-        ) : (
-          <>
-            <li><Link to="/login">Prijava</Link></li>
-            <li><Link to="/register">Registracija</Link></li>
-          </>
-        )}
-      </ul>
-    </nav>
+    <header className="nav-wrap">
+      <nav className="navbar">
+        <div className="nav-left">
+          <Link to="/" className="brand">Shop</Link>
+          <Link to="/proizvodi" className={pathname.startsWith("/proizvodi") ? "active" : ""}>Proizvodi</Link>
+          <Link to="/contact" className={pathname.startsWith("/contact") ? "active" : ""}>Kontakt</Link>
+        </div>
+
+        <div className="nav-right">
+          {currentUser ? (
+            <>
+              <span className="hello">Zdravo, {currentUser.name || "korisnik"}</span>
+              <button className="link-btn" onClick={logoutUser}>Odjava</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Prijava</Link>
+              <Link to="/register">Registracija</Link>
+            </>
+          )}
+
+          <Link to="/korpa" className="cart-link" aria-label="Korpa">
+            🛒
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </Link>
+        </div>
+      </nav>
+      {/* spacer da sadržaj ne ide ispod navbar-a */}
+      <div className="nav-spacer" />
+    </header>
   );
 }
-
-export default Navbar;
