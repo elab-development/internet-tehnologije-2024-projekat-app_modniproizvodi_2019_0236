@@ -14,6 +14,7 @@ import AdminMessages from "./pages/AdminMessages";
 import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
 import AdminProductDetail from "./pages/AdminProductDetail";
+import Breadcrumbs from "./Breadcrumbs";
 
 function App() {
   // poruke / korisnik (ostavljeno kao kod kod tebe)
@@ -56,6 +57,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar currentUser={currentUser} logoutUser={logoutUser} cartCount={cartCount} />
+        <Breadcrumbs />
       <Routes>
         {/* javno */}
         <Route path="/" element={<HomePage />} />

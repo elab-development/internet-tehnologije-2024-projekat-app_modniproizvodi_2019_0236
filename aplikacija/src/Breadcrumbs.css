@@ -1,0 +1,50 @@
+:root{
+  /* Ako već imaš varijablu visine navigacije, super — koristi se za sticky */
+  --nav-h: 72px;
+  --bc-bg: #ffffff;
+  --bc-border: #e5e7eb;
+  --bc-txt: #374151;
+  --bc-muted: #6b7280;
+  --bc-link: #ff5b7b;
+}
+
+.bc{
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 20;
+  background: var(--bc-bg);
+  border-bottom: 1px solid var(--bc-border);
+  padding: 10px 16px;
+}
+
+.bc__list{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: var(--bc-muted);
+  font-size: 14px;
+}
+
+.bc__item{ display: inline-flex; align-items: center; gap: 6px; }
+
+.bc__sep{
+  user-select: none;
+  color: var(--bc-border);
+  font-weight: 600;
+}
+
+.bc__link{
+  color: var(--bc-link);
+  text-decoration: none;
+  font-weight: 600;
+}
+.bc__link:hover{ text-decoration: underline; }
+
+.bc__cur{
+  color: var(--bc-txt);
+  font-weight: 700;
+}
