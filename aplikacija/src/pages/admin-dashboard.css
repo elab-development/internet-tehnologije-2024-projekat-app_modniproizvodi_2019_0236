@@ -1,0 +1,93 @@
+:root{
+  --nav-h: 72px;
+  --bg:#f6f7f9;
+  --panel:#fff;
+  --border:#e8e8e8;
+  --txt:#1f2937;
+  --muted:#6b7280;
+  --accent:#ff5b7b;
+  --accent2:#ff7a94;
+  --bar:#cfe6ff;
+  --line:#2563eb; /* plava linija */
+}
+
+.admin-dashboard{
+  padding: calc(var(--nav-h) + 18px) 18px 24px;
+  background: var(--bg);
+}
+
+.adm__head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 14px;
+}
+.adm__head h2{ margin:0; font-size: clamp(22px, 3vw, 30px); }
+
+.card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.06);
+}
+
+.note{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#7c2d12;
+  padding:10px 12px; border-radius:10px; margin:10px 0;
+}
+.note--err{
+  background:#fef2f2; border-color:#fecaca; color:#7f1d1d;
+}
+
+/* counters */
+.adm__grid-4{
+  display:grid; gap:12px; grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 12px;
+}
+.counter{
+  display:grid; gap:8px; align-content:center; min-height: 90px;
+}
+.counter__value{ font-size: 28px; font-weight: 800; color: var(--txt); }
+.counter__title{ color: var(--muted); }
+
+/* charts */
+.adm__charts{
+  display:grid; gap:12px; grid-template-columns: 1fr; /* 1 kolona; lako prebaciti u 2 */
+}
+.adm__chart h3{ margin: 0 0 8px; }
+.adm__legend{
+  display:flex; gap:14px; align-items:center; color: var(--muted);
+  margin-top: 8px; font-size: 14px;
+}
+.lg{ width:14px; height:14px; border-radius:4px; display:inline-block; }
+.lg--bar{ background: var(--bar); border:1px solid #bfdbfe; }
+.lg--line{ background: var(--line); }
+
+/* totals */
+.adm__total{ margin-top: 12px; }
+.adm__row{ display:flex; align-items:center; justify-content:space-between; }
+.adm__big{ font-size:24px; font-weight:800; color: var(--txt); }
+
+/* svg charts */
+.chart{ width: 100%; height: auto; }
+.axis{ stroke:#d1d5db; stroke-width:1; }
+.grid{ stroke:#f1f5f9; stroke-width:1; }
+.tick{ fill:#4b5563; font-size:12px; }
+.bar{ fill: var(--bar); stroke:#bfdbfe; }
+.line{ stroke: var(--line); stroke-width:2.5; }
+
+/* horizontal bar */
+.hbar{ fill:#e5e7eb; }
+.hbar:hover{ fill:#dbeafe; }
+
+@media (max-width: 900px){
+  .adm__grid-4{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px){
+  .adm__grid-4{ grid-template-columns: 1fr; }
+}
+.muted { color: var(--muted); }
+
+.recharts-default-legend { color: var(--muted); font-size: 13px; }
+.recharts-tooltip-wrapper { filter: drop-shadow(0 6px 16px rgba(0,0,0,.06)); }
