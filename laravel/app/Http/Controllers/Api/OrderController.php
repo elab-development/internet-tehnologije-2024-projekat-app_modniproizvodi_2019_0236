@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderCreatedMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -40,17 +42,7 @@ class OrderController extends Controller
         $order->load('items');
         return $order;
     }
-
-    /**
-     * POST /api/orders
-     * Body (JSON ili form-data):
-     * {
-     *   "customer_name": "...", "customer_email": "...", "customer_phone": "...",
-    
-     *   "items": [ { "product_id":1, "quantity":2 }, ... ]
-     * }
-     * Snapshot-uje name/price iz Product u OrderItem.
-     */
+ 
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -92,7 +84,11 @@ class OrderController extends Controller
 
             // izračunaj total i snimi
             $order->load('items')->recalcTotal();
-
+             if (filled($order->customer_email)) {
+                   
+                    Mail::to($order->customer_email)->queue(new OrderCreatedMail($order));
+                   
+                }
             return $order->fresh('items');
         });
 
