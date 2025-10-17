@@ -9,6 +9,9 @@ import Register from './Register';
 import ProductList from './ProductList';
 import Cart from './Cart';
 import AdminMessages from './pages/AdminMessages';
+import AdminProducts from './pages/AdminProducts';
+import AdminProductForm from './pages/AdminProductForm';
+import AdminProductDetail from './pages/AdminProductDetail';
 
  
 function App() {
@@ -74,6 +77,10 @@ function App() {
 
 
 
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/products/new" element={<AdminProductForm />} />
+            <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+            <Route path="/admin/products/:id" element={<AdminProductDetail />} />
           <Route path="/admin/poruke" element={<AdminMessages />} />
 
         </Routes>

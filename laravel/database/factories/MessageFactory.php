@@ -15,7 +15,7 @@ class MessageFactory extends Factory
         return [
             'name'      => $this->faker->name(),
             'email'     => $this->faker->safeEmail(), 
-            'message'   => $text,
+            'body'   => $text,
             'processed' => $this->faker->boolean(20),
         ];
     }

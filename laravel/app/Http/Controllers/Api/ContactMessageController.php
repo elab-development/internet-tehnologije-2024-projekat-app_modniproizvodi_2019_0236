@@ -15,13 +15,13 @@ class ContactMessageController extends Controller
         $data = $request->validate([
             'name'    => ['required','string','max:255'],
             'email'   => ['required','email','max:255'],
-            'message' => ['required','string','max:5000'],
+            'body' => ['required','string','max:5000'],
         ]);
 
         $msg = Message::create([
             'name'        => $data['name'],
             'email'       => $data['email'],
-            'message'     => $data['message'],
+            'body'     => $data['body'],
             'processed'   => false,
             'processed_at'=> null,
         ]);
@@ -40,7 +40,7 @@ class ContactMessageController extends Controller
                     $term = '%'.$request->string('q').'%';
                     $w->where('name','like',$term)
                       ->orWhere('email','like',$term)
-                      ->orWhere('message','like',$term);
+                      ->orWhere('body','like',$term);
                 }))
             ->orderByDesc('id');
 

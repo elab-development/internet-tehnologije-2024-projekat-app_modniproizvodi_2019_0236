@@ -15,7 +15,7 @@ export default function ContactForm() {
     setStatus("");
     setLoading(true);
     try {
-      await api.post("/contact-messages", { name, email, message });
+      await api.post("/contact-messages", { name, email, body:message });
       setStatus("Vaša poruka je uspešno poslata. Hvala!");
       setName("");
       setEmail("");
