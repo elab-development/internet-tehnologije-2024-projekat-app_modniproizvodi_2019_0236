@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ContactMessageController;
 use App\Http\Controllers\Api\OrderController;
 
 /*
@@ -70,4 +71,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Promena statusa (kratka ruta)
     Route::patch('/orders/{order}/status',                               [OrderController::class, 'updateStatus']);
+});
+
+
+// Javno: slanje poruke sa sajta
+Route::post('/contact-messages', [ContactMessageController::class, 'store']);
+
+// Admin za pregled / obradu (primer middleware-a; prilagodi po tvom projektu)
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/contact-messages', [ContactMessageController::class, 'index']);
+    Route::get('/contact-messages/{message}', [ContactMessageController::class, 'show']);
+    Route::patch('/contact-messages/{message}/process', [ContactMessageController::class, 'process']);
+    Route::delete('/contact-messages/{message}', [ContactMessageController::class, 'destroy']);
 });

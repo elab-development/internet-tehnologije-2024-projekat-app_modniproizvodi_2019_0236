@@ -46,7 +46,7 @@ class OrderController extends Controller
      * Body (JSON ili form-data):
      * {
      *   "customer_name": "...", "customer_email": "...", "customer_phone": "...",
-     *   "notes": "...",
+    
      *   "items": [ { "product_id":1, "quantity":2 }, ... ]
      * }
      * Snapshot-uje name/price iz Product u OrderItem.
@@ -57,7 +57,7 @@ class OrderController extends Controller
             'customer_name'  => ['required','string','max:255'],
             'customer_email' => ['required','email','max:255'],
             'customer_phone' => ['nullable','string','max:50'],
-            'notes'          => ['nullable','string'],
+             
             'items'          => ['required','array','min:1'],
             'items.*.product_id' => ['required','integer','exists:products,id'],
             'items.*.quantity'   => ['required','integer','min:1'],
@@ -72,7 +72,7 @@ class OrderController extends Controller
             $order->customer_name  = $data['customer_name'];
             $order->customer_email = $data['customer_email'];
             $order->customer_phone = $data['customer_phone'] ?? null;
-            $order->notes          = $data['notes'] ?? null;
+        
             $order->status         = Order::STATUS_PENDING;
             $order->total_price    = 0;
             $order->save();
@@ -107,7 +107,7 @@ class OrderController extends Controller
             'customer_name'  => ['sometimes','string','max:255'],
             'customer_email' => ['sometimes','email','max:255'],
             'customer_phone' => ['sometimes','nullable','string','max:50'],
-            'notes'          => ['sometimes','nullable','string'],
+       
             // opciono: kompletna zamena stavki
             'items'          => ['sometimes','array','min:1'],
             'items.*.product_id' => ['required_with:items','integer','exists:products,id'],
@@ -119,7 +119,7 @@ class OrderController extends Controller
                 'customer_name'  => $data['customer_name']  ?? $order->customer_name,
                 'customer_email' => $data['customer_email'] ?? $order->customer_email,
                 'customer_phone' => array_key_exists('customer_phone',$data) ? $data['customer_phone'] : $order->customer_phone,
-                'notes'          => array_key_exists('notes',$data) ? $data['notes'] : $order->notes,
+               
             ]);
 
             if (array_key_exists('items', $data)) {

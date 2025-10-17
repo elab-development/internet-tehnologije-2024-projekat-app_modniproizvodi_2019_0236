@@ -30,8 +30,7 @@ class User extends Authenticatable /* implements MustVerifyEmail */
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',  
+        'email_verified_at' => 'datetime', 
         'role' => 'string',
     ];
 

@@ -1,21 +1,32 @@
+import React, { useState } from "react";
  
+import "./ContactForm.css";
+import api from "./api";
 
-import React, { useState } from 'react';
-import './ContactForm.css';
+export default function ContactForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
 
-function ContactForm({ addMessage }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newMessage = { name, email, message };
-    addMessage(newMessage);
- 
-    setName('');
-    setEmail('');
-    setMessage('');
+    setStatus("");
+    setLoading(true);
+    try {
+      await api.post("/contact-messages", { name, email, message });
+      setStatus("Vaša poruka je uspešno poslata. Hvala!");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (err) {
+      setStatus(
+        err?.response?.data?.message || "Došlo je do greške pri slanju poruke."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,6 +40,7 @@ function ContactForm({ addMessage }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            disabled={loading}
           />
           <input
             type="email"
@@ -36,18 +48,22 @@ function ContactForm({ addMessage }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
           <textarea
             placeholder="Vaša poruka"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
-          ></textarea>
-          <button type="submit">Pošalji</button>
+            disabled={loading}
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? "Slanje..." : "Pošalji"}
+          </button>
         </form>
+
+        {status && <p className="form-status">{status}</p>}
       </div>
     </div>
   );
 }
-
-export default ContactForm;

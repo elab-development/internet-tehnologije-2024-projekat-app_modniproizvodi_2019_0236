@@ -23,7 +23,7 @@ class OrderFactory extends Factory
                 Order::STATUS_PAID,
                 Order::STATUS_CANCELLED
             ]),
-            'notes'          => $this->faker->boolean(30) ? $this->faker->sentence(8) : null,
+       
             'total_price'    => 0, // popunićemo posle kroz afterCreating
         ];
     }

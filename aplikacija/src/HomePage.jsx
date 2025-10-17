@@ -8,7 +8,7 @@ function HomePage() {
       <header className="hero-section">
         <h1>Dobrodošli u Modnu Oazu</h1>
         <p>Otkrijte najnovije modne trendove i inspiracije</p>
-        <button className="shop-now-btn">Kupujte Sada</button>
+        <button className="shop-now-btn">Kupujte sada</button>
       </header>
 
       <section className="featured-collections">

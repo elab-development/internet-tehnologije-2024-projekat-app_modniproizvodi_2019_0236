@@ -24,9 +24,8 @@ class AuthController extends Controller
         $user = User::create([
             'name'     => $data['name'],
             'username' => $data['username'],
-            'email'    => $data['email'],
-            // cast 'hashed' u modelu će hešovati plain text
-            'password' => $data['password'],
+            'email'    => $data['email'], 
+            'password' => Hash::make($data['password']),
             'role'     => User::ROLE_USER,
         ]);
 
