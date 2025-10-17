@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminMetricsController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -83,4 +84,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/contact-messages/{message}', [ContactMessageController::class, 'show']);
     Route::patch('/contact-messages/{message}/process', [ContactMessageController::class, 'process']);
     Route::delete('/contact-messages/{message}', [ContactMessageController::class, 'destroy']);
+
+    Route::get('/admin/overview', [AdminMetricsController::class, 'overview']);
 });
