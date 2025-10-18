@@ -194,3 +194,6 @@
 
 /* (opciono) ako i dalje imaš preklapanje, povećaj var(--nav-h) ili ovu marginu: */
 .ap__filters { margin-top: 8px; }
+.badge.warn { background: #fff7e6; color: #ad6800; border: 1px solid #ffe58f; }
+.badge.danger { background: #fff1f0; color: #a8071a; border: 1px solid #ffa39e; }
+.ap__input--tiny { padding: 4px 6px; font-size: 12px; }

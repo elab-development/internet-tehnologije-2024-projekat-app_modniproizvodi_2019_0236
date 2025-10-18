@@ -16,6 +16,7 @@ import AdminProductForm from "./pages/AdminProductForm";
 import AdminProductDetail from "./pages/AdminProductDetail";
 import Breadcrumbs from "./Breadcrumbs";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminOrders from "./pages/AdminOrders";
 
 function App() {
   // poruke / korisnik (ostavljeno kao kod kod tebe)
@@ -84,6 +85,7 @@ function App() {
 
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/poruke" element={<AdminMessages />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/new" element={<AdminProductForm />} />
         <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />

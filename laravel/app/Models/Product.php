@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class Product extends Model
 {
       use HasFactory;
-    // Front koristi: id, name, description, price, image
+    
     protected $fillable = [
         'category_id',
         'name',

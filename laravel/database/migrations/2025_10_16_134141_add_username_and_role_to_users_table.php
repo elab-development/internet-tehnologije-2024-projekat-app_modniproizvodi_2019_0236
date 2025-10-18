@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // username: unique, posle name
-            $table->string('username', 60)->nullable()->after('name');
-            // role: user/admin (može i enum/check, ali string je najjednostavniji)
+        Schema::table('users', function (Blueprint $table) { 
+            $table->string('username', 60)->nullable()->after('name'); 
             $table->string('role', 20)->default('user')->after('password');
         });
 

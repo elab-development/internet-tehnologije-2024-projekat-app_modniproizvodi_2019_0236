@@ -11,7 +11,7 @@ class Order extends Model
 {
       use HasFactory;
     protected $fillable = [
-        'user_id',          // opcionalno: ako želiš vezu sa prijavljenim korisnikom
+        'user_id',          
         'customer_name',
         'customer_email',
         'customer_phone',
