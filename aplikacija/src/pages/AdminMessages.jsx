@@ -122,7 +122,7 @@ export default function AdminMessages() {
                 <div title={m.name}>{m.name}</div>
                 <div title={m.email}>{m.email}</div>
                 <div className="msg-cell" title={m.message}>
-                  {m.message?.slice(0, 60) || ""}{m.message?.length > 60 ? "…" : ""}
+                  {m.body?.slice(0, 60) || ""}{m.body?.length > 60 ? "…" : ""}
                 </div>
                 <div>
                   <span className={`badge ${m.processed ? "ok" : "pending"}`}>
@@ -189,7 +189,7 @@ export default function AdminMessages() {
 
             <div className="message-full">
               <strong>Poruka</strong>
-              <p>{selected.message}</p>
+              <p>{selected.body}</p>
             </div>
 
             <div className="modal-actions">

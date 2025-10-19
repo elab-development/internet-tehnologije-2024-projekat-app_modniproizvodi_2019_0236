@@ -31,7 +31,7 @@ export default function AdminDashboard() {
         const r = await api.get("/admin/overview", { signal: ctrl.signal });
         setData(r?.data ?? r);
       } catch (e) {
-        setErr(e?.response?.data?.message || "Ne mogu da učitam metrike.");
+        setErr(e?.response?.data?.message || "");
       } finally {
         setLoading(false);
       }

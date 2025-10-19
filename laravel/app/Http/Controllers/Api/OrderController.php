@@ -88,7 +88,7 @@ class OrderController extends Controller
                    
                     Mail::to($order->customer_email)->queue(new OrderCreatedMail($order));
                    
-                }
+                } 
             return $order->fresh('items');
         });
 

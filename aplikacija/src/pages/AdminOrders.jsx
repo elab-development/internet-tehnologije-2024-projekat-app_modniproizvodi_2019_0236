@@ -108,8 +108,7 @@ export default function AdminOrders() {
   const updateStatus = async (row, newStatus) => {
     try {
       setSavingId(row.id);
-      await api.patch(`/orders/${row.id}/status`, { status: newStatus });
-      // optimističko ažuriranje
+      await api.patch(`/orders/${row.id}/status`, { status: newStatus }); 
       setItems((prev) => prev.map(o => o.id === row.id ? { ...o, status: newStatus } : o));
     } catch (e) {
       alert(e?.response?.data?.message || "Greška pri promeni statusa.");
@@ -193,7 +192,6 @@ export default function AdminOrders() {
                     <span className={statusBadgeClass(o.status)}>{o.status || "—"}</span>
                   </td>
                   <td className="ta-center">
-                    {/* ako kasnije dodaš detaljnu stranu: <Link className="btn btn--tiny" to={`/admin/orders/${o.id}`}>Detalji</Link>{" "} */}
                     <select
                       className="ap__input ap__input--tiny"
                       value={o.status || "pending"}
