@@ -18,8 +18,25 @@ import Breadcrumbs from "./Breadcrumbs";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrders from "./pages/AdminOrders";
 
+//dodajemo ovaj kod kako bismo resili problem
+/*
+-moze da se pristupi stranicama ako nisi ulogovan ako se ukuca u URL npr. localhost:3000/proizvodi ili 
+ cak admin stranicama npr localhost:3000/admin/orders ako si neulogovan ili obican korisnik
+*/
+import { Navigate } from "react-router-dom";
+
+// samo ulogovan korisnik
+const RequireAuth = ({ user, children }) =>
+  user ? children : <Navigate to="/login" replace />;
+
+// samo admin
+const RequireAdmin = ({ user, children }) =>
+  String(user?.role || "").toLowerCase() === "admin" ? children : <Navigate to="/login" replace />;
+
+
+
 function App() {
-  // poruke / korisnik (ostavljeno kao kod kod tebe)
+  // poruke / korisnik 
   const [messages, setMessages] = useState(() => JSON.parse(localStorage.getItem("messages") || "[]"));
   const [currentUser, setCurrentUser] = useState(() => JSON.parse(localStorage.getItem("currentUser") || "null"));
 
@@ -60,37 +77,97 @@ function App() {
     <BrowserRouter>
       <Navbar currentUser={currentUser} logoutUser={logoutUser} cartCount={cartCount} />
         <Breadcrumbs />
-      <Routes>
-        {/* javno */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/contact" element={<ContactForm addMessage={addMessage} />} />
-        <Route path="/login" element={<Login onAuth={(u) => setCurrentUser(u)} />} />
-        <Route path="/register" element={<Register />} />
+          <Routes>
+            {/* javno */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/contact" element={<ContactForm addMessage={addMessage} />} />
+            <Route path="/login" element={<Login onAuth={(u) => setCurrentUser(u)} />} />
+            <Route path="/register" element={<Register />} />
 
-        {/* shop */}
-        <Route path="/proizvodi" element={<ProductList addToCart={addToCart} />} />
-        <Route
-          path="/korpa"
-          element={
-            <Cart
-              cart={cart}
-              setCart={setCart}
-              incQty={incQty}
-              decQty={decQty}
-              removeItem={removeItem}
-              clearCart={clearCart}
+            {/* shop – SAMO ulogovani */}
+            <Route
+              path="/proizvodi"
+              element={
+                <RequireAuth user={currentUser}>
+                  <ProductList addToCart={addToCart} />
+                </RequireAuth>
+              }
             />
-          }
-        />
+            <Route
+              path="/korpa"
+              element={
+                <RequireAuth user={currentUser}>
+                  <Cart
+                    cart={cart}
+                    setCart={setCart}
+                    incQty={incQty}
+                    decQty={decQty}
+                    removeItem={removeItem}
+                    clearCart={clearCart}
+                  />
+                </RequireAuth>
+              }
+            />
 
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/poruke" element={<AdminMessages />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/products/new" element={<AdminProductForm />} />
-        <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
-        <Route path="/admin/products/:id" element={<AdminProductDetail />} />
-      </Routes>
+            {/* admin – SAMO admin */}
+            <Route
+              path="/admin"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminDashboard />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/poruke"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminMessages />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/orders"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminOrders />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/products"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminProducts />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/products/new"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminProductForm />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/products/:id/edit"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminProductForm />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/products/:id"
+              element={
+                <RequireAdmin user={currentUser}>
+                  <AdminProductDetail />
+                </RequireAdmin>
+              }
+            />
+          </Routes>
+
     </BrowserRouter>
   );
 }
