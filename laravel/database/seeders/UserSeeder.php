@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'username' => 'admin',
-                'password' => 'admin123', // cast: hashed
+                'password' => Hash::make('admin123'),
                 'role' => User::ROLE_ADMIN,
             ]
         );
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'User Demo',
                 'username' => 'userdemo',
-                'password' => 'password',
+                'password' => Hash::make('password'),
                 'role' => User::ROLE_USER,
             ]
         );

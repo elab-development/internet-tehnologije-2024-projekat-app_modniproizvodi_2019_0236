@@ -197,3 +197,6 @@
 .badge.warn { background: #fff7e6; color: #ad6800; border: 1px solid #ffe58f; }
 .badge.danger { background: #fff1f0; color: #a8071a; border: 1px solid #ffa39e; }
 .ap__input--tiny { padding: 4px 6px; font-size: 12px; }
+.ap__pag { display:flex; gap:.5rem; align-items:center; justify-content:flex-end; margin-top:1rem; }
+.ap__gap { padding: 0 .25rem; opacity:.6; }
+.btn.is-active { pointer-events:none; font-weight:600; outline:1px solid currentColor; }

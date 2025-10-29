@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
- 
+
 import "./admin-products.css";
 import api from "../api";
 
@@ -29,7 +29,7 @@ export default function AdminProducts() {
   const [err, setErr] = useState("");
   const [cats, setCats] = useState([]);
 
-  // ucitaj kategorije (pretpostavka: /api/categories vraća [{id,name}...])
+  // ucitaj kategorije
   useEffect(() => {
     (async () => {
       try {
@@ -55,9 +55,7 @@ export default function AdminProducts() {
   }, [q, categoryId, onlyActive, priceMin, priceMax, sort, page, perPage, setSearchParams]);
 
   const params = useMemo(() => {
-    const p = {
-      page, per_page: perPage,
-    };
+    const p = { page, per_page: perPage };
     if (q) p.q = q;
     if (categoryId) p.category_id = categoryId;
     if (onlyActive) p.only_active = 1;
@@ -76,7 +74,8 @@ export default function AdminProducts() {
         const r = await api.get("/products", { params, signal: ctrl.signal });
         const body = r?.data ?? r;
         setItems(Array.isArray(body?.data) ? body.data : []);
-        setMeta(body?.meta ?? null);
+        // KEY FIX: Laravel paginate polja su na root-u
+        setMeta(body?.meta ?? body ?? null);
       } catch (e) {
         if (e.name !== "CanceledError" && e.name !== "AbortError") {
           setErr("Greška pri učitavanju proizvoda.");
@@ -99,10 +98,41 @@ export default function AdminProducts() {
     setPage(1);
   };
 
+  
+  // Trenutna stranica.
+  // Ako backend vrati objekat meta sa poljem current_page, uzmi to.
+  // Ako ne (meta je null/undefined), podrazumevaj da smo na 1. strani.
+  const curPage = meta?.current_page ?? 1;
+
+  // Ukupan broj stranica (lastPage).
+  // Preferiramo vrednost koju backend direktno daje (last_page).
+  // Ako je nema, pokušamo da je izračunamo iz total/per_page (npr. 78 ukupno, po 12 na strani -> 7 strana).
+  // Ako ni to nemamo, bar vrati 1 (tj. tretiraj kao da nema više strana).
+  const lastPage =
+    meta?.last_page ??
+    (meta?.total && meta?.per_page ? Math.ceil(meta.total / meta.per_page) : 1);
+
+  // Da li postoji PRETHODNA strana?
+  // Backend kod Laravel paginate često vraća prev_page_url. Ako postoji, sigurno ima "prethodna".
+  // Ako nema prev_page_url, onda bar proverimo da li je current > 1.
+  // (Ako si na stranici 1, nemaš gde unazad.)
+  const hasPrev = !!(meta?.prev_page_url || (curPage > 1));
+
+  // Da li postoji SLEDEĆA strana?
+  // Ako backend da next_page_url — super, ima sledeće.
+  // Ako ne, ali znamo lastPage, onda proverimo da li je current < lastPage.
+  // (Ako si već na poslednjoj strani, nemaš gde napred.)
+  const hasNext = !!(meta?.next_page_url || (lastPage ? curPage < lastPage : false));
+
+
   const gotoPage = (p) => {
     if (!meta) return;
     const n = Number(p);
-    if (Number.isFinite(n) && n >= 1 && n <= meta.last_page) setPage(n);
+    if (!lastPage || Number.isNaN(lastPage)) {
+      if (Number.isFinite(n) && n >= 1) setPage(n);
+      return;
+    }
+    if (Number.isFinite(n) && n >= 1 && n <= lastPage) setPage(n);
   };
 
   const resolveImg = (path) => {
@@ -118,11 +148,56 @@ export default function AdminProducts() {
       const r = await api.get("/products", { params });
       const body = r?.data ?? r;
       setItems(Array.isArray(body?.data) ? body.data : []);
-      setMeta(body?.meta ?? null);
+      // KEY FIX i ovde:
+      setMeta(body?.meta ?? body ?? null);
     } catch (e) {
       alert(e?.response?.data?.message || "Greška pri brisanju.");
     }
   };
+
+  // === helper za numeričke stranice sa "…"
+  // Ideja: uvek prikažemo 1 i last, oko current prikažemo mali prozor (spread),
+  // a između delova ubacujemo "…" da ne renderujemo 100+ dugmića.
+  const makePages = (current, last, spread = 2) => {
+    // Ako nema više strana (last <= 1), nema smisla praviti listu — vrati samo [1].
+    if (!last || last <= 1) return [1];
+
+    const out = [];
+
+    // Mini helper: gurni vrednost u niz samo ako nije ista kao poslednja,
+    // da ne dobijemo duplikate tipa "..., ..., 10".
+    const push = (v) => {
+      if (out[out.length - 1] !== v) out.push(v);
+    };
+
+    // 1) Uvek prikaži prvu stranu (1).
+    push(1);
+
+    // 2) Računaj početak "prozorčića" oko current-a.
+    // Ne želimo da padnemo ispod 2 (jer 1 smo već ubacili).
+    const start = Math.max(2, current - spread);
+
+    // 3) Ako između "1" i "start" ima rupa (npr. 1 ... 5),
+    // ubaci "…" da naznači preskok.
+    if (start > 2) push("...");
+
+    // 4) Ubaci brojeve od start do desne granice prozora,
+    // ali ne diramo poslednju stranu (last) — nju dodajemo kasnije.
+    for (let p = start; p <= Math.min(last - 1, current + spread); p++) {
+      push(p);
+    }
+
+    // 5) Ako ima rupa između desne ivice prozora i poslednje strane (last),
+    // ubaci "…" (npr. ... 15 last).
+    if (current + spread < last - 1) push("...");
+
+    // 6) Na kraju uvek prikaži poslednju stranu (last),
+    // ali samo ako je > 1 (što već znamo iz prvog return-a).
+    if (last > 1) push(last);
+
+    return out;
+  };
+
 
   return (
     <main className="ap admin-page">
@@ -237,17 +312,58 @@ export default function AdminProducts() {
         </table>
       </div>
 
-      {meta && meta.last_page > 1 && (
+      {meta && (lastPage > 1 || hasPrev || hasNext) && (
         <div className="ap__pag">
-          <button className="btn btn--tiny"
-            disabled={meta.current_page <= 1}
-            onClick={() => gotoPage(meta.current_page - 1)}
-          >← Prethodna</button>
-          <span>Strana {meta.current_page} / {meta.last_page}</span>
-          <button className="btn btn--tiny"
-            disabled={meta.current_page >= meta.last_page}
-            onClick={() => gotoPage(meta.current_page + 1)}
-          >Sledeća →</button>
+          {lastPage > 1 && (
+            <button
+              className="btn btn--tiny"
+              disabled={curPage <= 1}
+              onClick={() => gotoPage(1)}
+            >
+              « Prva
+            </button>
+          )}
+
+          <button
+            className="btn btn--tiny"
+            disabled={!hasPrev}
+            onClick={() => gotoPage(curPage - 1)}
+          >
+            ← Prethodna
+          </button>
+
+          {lastPage > 1 && makePages(curPage, lastPage, 2).map((p, idx) =>
+            p === "..."
+              ? <span key={`gap-${idx}`} className="ap__gap">…</span>
+              : (
+                <button
+                  key={p}
+                  className={`btn btn--tiny ${p === curPage ? "is-active" : ""}`}
+                  disabled={p === curPage}
+                  onClick={() => gotoPage(p)}
+                >
+                  {p}
+                </button>
+              )
+          )}
+
+          <button
+            className="btn btn--tiny"
+            disabled={!hasNext}
+            onClick={() => gotoPage(curPage + 1)}
+          >
+            Sledeća →
+          </button>
+
+          {lastPage > 1 && (
+            <button
+              className="btn btn--tiny"
+              disabled={curPage >= lastPage}
+              onClick={() => gotoPage(lastPage)}
+            >
+              Poslednja »
+            </button>
+          )}
         </div>
       )}
     </main>
